@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Books Published | Publication Showcase</title>
+  <style>
+    :root {
+      --cyan-primary: #00a8b5;
+      --cyan-dark: #008893;
+      --cyan-soft: #e6f7f8;
+      --gold-accent: #d4af37;
+      --gold-hover: #b8952d;
+      --bg-main: #fafafa;
+      --card-bg: #ffffff;
+      --text-dark: #1a1a1a;
+      --text-muted: #666666;
+      --border-light: #e8e8e8;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-main);
+      color: var(--text-dark);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header & Navigation */
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-light);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2rem;
+    }
+
+    .brand-logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--cyan-primary);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-cta {
+      background-color: var(--gold-accent);
+      color: #ffffff !important;
+      padding: 0.55rem 1.25rem;
+      border-radius: 6px;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: background-color 0.2s ease;
+    }
+
+    .nav-cta:hover {
+      background-color: var(--gold-hover);
+    }
+
+    /* Hamburger Menu Button */
+    .hamburger-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 28px;
+      height: 20px;
+      z-index: 101;
+      padding: 0;
+    }
+
+    .hamburger-btn span {
+      display: block;
+      width: 100%;
+      height: 3px;
+      background-color: var(--text-dark);
+      border-radius: 2px;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .hamburger-btn.active span:nth-child(1) {
+      transform: translateY(8.5px) rotate(45deg);
+      background-color: var(--cyan-primary);
+    }
+
+    .hamburger-btn.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger-btn.active span:nth-child(3) {
+      transform: translateY(-8.5px) rotate(-45deg);
+      background-color: var(--cyan-primary);
+    }
+
+    /* Slide-out Menu Overlay */
+    .mobile-menu-overlay {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 320px;
+      height: 100vh;
+      background: var(--card-bg);
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+      z-index: 99;
+      display: flex;
+      flex-direction: column;
+      padding: 6rem 2.5rem 2.5rem 2.5rem;
+      transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mobile-menu-overlay.active { right: 0; }
+
+    .mobile-menu-overlay nav {
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    .mobile-menu-overlay a {
+      text-decoration: none;
+      color: var(--text-dark);
+      font-size: 1.2rem;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .mobile-menu-overlay a:hover { color: var(--cyan-primary); }
+
+    .backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 98;
+    }
+
+    .backdrop.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Page Header */
+    .page-header {
+      max-width: 1200px;
+      margin: 3rem auto 1.5rem auto;
+      padding: 0 2rem;
+    }
+
+    .page-header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .page-header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    /* Category Filter Tabs */
+    .filter-container {
+      max-width: 1200px;
+      margin: 0 auto 2.5rem auto;
+      padding: 0 2rem;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-light);
+      padding: 0.5rem 1.25rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--cyan-primary);
+      color: var(--cyan-primary);
+    }
+
+    .filter-btn.active {
+      background: var(--cyan-primary);
+      color: #ffffff;
+      border-color: var(--cyan-primary);
+    }
+
+    /* Book Gallery Grid */
+    .gallery-container {
+      max-width: 1200px;
+      margin: 0 auto 5rem auto;
+      padding: 0 2rem;
+    }
+
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 2rem;
+    }
+
+    .book-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .book-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .book-card.hidden {
+      display: none;
+    }
+
+    .book-cover {
+      width: 100%;
+      height: 320px;
+      background-color: var(--cyan-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cyan-primary);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .book-info { padding: 1.25rem; }
+
+    .book-category {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--gold-accent);
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+    }
+
+    .book-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .book-author {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Interactive Modal Lightbox */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 200;
+      padding: 1.5rem;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      border-radius: 12px;
+      max-width: 700px;
+      width: 100%;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      animation: modalUp 0.3s ease forwards;
+    }
+
+    @keyframes modalUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-cover {
+      width: 40%;
+      background: var(--cyan-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cyan-primary);
+      font-weight: 600;
+      min-height: 350px;
+    }
+
+    .modal-details {
+      width: 60%;
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1.25rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .modal-category {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--gold-accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.25rem;
+    }
+
+    .modal-author {
+      font-size: 1rem;
+      color: var(--cyan-primary);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .modal-description {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+    }
+
+    .modal-cta {
+      background-color: var(--cyan-primary);
+      color: #ffffff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      text-decoration: none;
+      text-align: center;
+      font-weight: 600;
+      transition: background-color 0.2s ease;
+    }
+
+    .modal-cta:hover { background-color: var(--cyan-dark); }
+
+    @media (max-width: 600px) {
+      .modal-content { flex-direction: column; }
+      .modal-cover { width: 100%; height: 200px; min-height: auto; }
+      .modal-details { width: 100%; padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- Header Navigation -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="brand-logo">Publisher Name</a>
+      <div class="nav-actions">
+        <a href="#" class="nav-cta">Contact Us</a>
+        <button class="hamburger-btn" id="menuToggle" aria-label="Toggle Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Slide-out Menu -->
+  <div class="mobile-menu-overlay" id="sideMenu">
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">About Company</a>
+      <a href="#">The Team</a>
+      <a href="#">Books Published</a>
+      <a href="#">Publishing Process</a>
+      <a href="#">Contact Us</a>
+    </nav>
+  </div>
+
+  <!-- Page Title -->
+  <section class="page-header">
+    <h1>Published Books</h1>
+    <p>Browse our complete showcase of published titles across all genres.</p>
+  </section>
+
+  <!-- Filter Category Buttons -->
+  <div class="filter-container">
+    <button class="filter-btn active" data-filter="all">All Titles</button>
+    <button class="filter-btn" data-filter="fiction">Fiction</button>
+    <button class="filter-btn" data-filter="non-fiction">Non-Fiction</button>
+    <button class="filter-btn" data-filter="biography">Biography</button>
+  </div>
+
+  <!-- Gallery Grid -->
+  <section class="gallery-container">
+    <div class="book-grid">
+      
+      <!-- Book 1 -->
+      <div class="book-card" data-category="non-fiction" 
+           data-title="Principles of Modern Design" 
+           data-author="Jane Doe" 
+           data-desc="Placeholder description: An insightful deep-dive into visual systems, structural typography, and minimalist brand frameworks.">
+        <div class="book-cover">[ Cover 1 ]</div>
+        <div class="book-info">
+          <div class="book-category">Non-Fiction</div>
+          <div class="book-title">Principles of Modern Design</div>
+          <div class="book-author">By Jane Doe</div>
+        </div>
+      </div>
+
+      <!-- Book 2 -->
+      <div class="book-card" data-category="fiction" 
+           data-title="Shadows in the Wind" 
+           data-author="Robert Smith" 
+           data-desc="Placeholder description: A captivating narrative following an artist navigating mystery and history in small-town coastal Europe.">
+        <div class="book-cover">[ Cover 2 ]</div>
+        <div class="book-info">
+          <div class="book-category">Fiction</div>
+          <div class="book-title">Shadows in the Wind</div>
+          <div class="book-author">By Robert Smith</div>
+        </div>
+      </div>
+
+      <!-- Book 3 -->
+      <div class="book-card" data-category="biography" 
+           data-title="The Architect's Journey" 
+           data-author="Alice Johnson" 
+           data-desc="Placeholder description: A celebrated biography chronicling the life and creative evolution of a pioneering 20th-century innovator.">
+        <div class="book-cover">[ Cover 3 ]</div>
+        <div class="book-info">
+          <div class="book-category">Biography</div>
+          <div class="book-title">The Architect's Journey</div>
+          <div class="book-author">By Alice Johnson</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Interactive Lightbox Modal -->
+  <div class="modal-overlay" id="bookModal">
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <div class="modal-cover" id="mCover">[ Cover ]</div>
+      <div class="modal-details">
+        <div class="modal-category" id="mCategory">Category</div>
+        <div class="modal-title" id="mTitle">Book Title</div>
+        <div class="modal-author" id="mAuthor">By Author Name</div>
+        <div class="modal-description" id="mDesc">Description text goes here...</div>
+        <a href="#" class="modal-cta">Inquire / Order Copy</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript logic for Menu, Filters, and Lightbox Modal -->
+  <script>
+    // Navigation Menu logic
+    const menuToggle = document.getElementById('menuToggle');
+    const sideMenu = document.getElementById('sideMenu');
+    const backdrop = document.getElementById('backdrop');
+
+    function toggleMenu() {
+      menuToggle.classList.toggle('active');
+      sideMenu.classList.toggle('active');
+      backdrop.classList.toggle('active');
+    }
+    menuToggle.addEventListener('click', toggleMenu);
+    backdrop.addEventListener('click', toggleMenu);
+
+    // Category Filtering logic
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const bookCards = document.querySelectorAll('.book-card');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.getAttribute('data-filter');
+        bookCards.forEach(card => {
+          if (filter === 'all' || card.getAttribute('data-category') === filter) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    // Modal Lightbox logic
+    const bookModal = document.getElementById('bookModal');
+    const modalClose = document.getElementById('modalClose');
+
+    bookCards.forEach(card => {
+      card.addEventListener('click', () => {
+        document.getElementById('mCategory').innerText = card.querySelector('.book-category').innerText;
+        document.getElementById('mTitle').innerText = card.getAttribute('data-title');
+        document.getElementById('mAuthor').innerText = card.getAttribute('data-author');
+        document.getElementById('mDesc').innerText = card.getAttribute('data-desc');
+        bookModal.classList.add('active');
+      });
+    });
+
+    modalClose.addEventListener('click', () => bookModal.classList.remove('active'));
+    bookModal.addEventListener('click', (e) => {
+      if (e.target === bookModal) bookModal.classList.remove('active');
+    });
+  </script>
+
+</body>
+</html>
