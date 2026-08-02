@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welkinstar Education Initiaivesn</title>
+  <style>
+    :root {
+      /* Palette tuned strictly for vivid Cyan, Gold accent, and crisp light backgrounds */
+      --cyan-primary: #00a8b5;
+      --cyan-dark: #008893;
+      --cyan-soft: #e6f7f8;
+      --gold-accent: #d4af37;
+      --gold-hover: #b8952d;
+      --bg-main: #fafafa;
+      --card-bg: #ffffff;
+      --text-dark: #1a1a1a;
+      --text-muted: #666666;
+      --border-light: #e8e8e8;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-main);
+      color: var(--text-dark);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Sticky Navigation Header */
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-light);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2rem;
+    }
+
+    .brand-logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--cyan-primary);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-cta {
+      background-color: var(--gold-accent);
+      color: #ffffff !important;
+      padding: 0.55rem 1.25rem;
+      border-radius: 6px;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: background-color 0.2s ease;
+    }
+
+    .nav-cta:hover {
+      background-color: var(--gold-hover);
+    }
+
+    /* Modern Hamburger Button Trigger */
+    .hamburger-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 28px;
+      height: 20px;
+      z-index: 101;
+      padding: 0;
+    }
+
+    .hamburger-btn span {
+      display: block;
+      width: 100%;
+      height: 3px;
+      background-color: var(--text-dark);
+      border-radius: 2px;
+      transition: all 0.3s ease-in-out;
+    }
+
+    /* Animated Close state (X icon) */
+    .hamburger-btn.active span:nth-child(1) {
+      transform: translateY(8.5px) rotate(45deg);
+      background-color: var(--cyan-primary);
+    }
+
+    .hamburger-btn.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger-btn.active span:nth-child(3) {
+      transform: translateY(-8.5px) rotate(-45deg);
+      background-color: var(--cyan-primary);
+    }
+
+    /* Slide-out Side Drawer Menu */
+    .mobile-menu-overlay {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 320px;
+      height: 100vh;
+      background: var(--card-bg);
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+      z-index: 99;
+      display: flex;
+      flex-direction: column;
+      padding: 6rem 2.5rem 2.5rem 2.5rem;
+      transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mobile-menu-overlay.active {
+      right: 0;
+    }
+
+    .mobile-menu-overlay nav {
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    .mobile-menu-overlay a {
+      text-decoration: none;
+      color: var(--text-dark);
+      font-size: 1.2rem;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .mobile-menu-overlay a:hover {
+      color: var(--cyan-primary);
+    }
+
+    /* Backdrop Shade when menu is open */
+    .backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 98;
+    }
+
+    .backdrop.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Clean Hero Banner */
+    .hero {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 4rem 2rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--cyan-soft);
+      color: var(--cyan-primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      max-width: 800px;
+      margin: 0 auto 1.25rem auto;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 620px;
+      margin: 0 auto 2rem auto;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background-color: var(--cyan-primary);
+      color: #ffffff;
+      padding: 0.8rem 1.75rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--cyan-dark);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--text-dark);
+      border: 1px solid var(--border-light);
+      padding: 0.8rem 1.75rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* Featured Books Grid */
+    .section-container {
+      max-width: 1200px;
+      margin: 0 auto 5rem auto;
+      padding: 0 2rem;
+    }
+
+    .section-header {
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 2rem;
+    }
+
+    .book-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .book-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    .book-cover-placeholder {
+      width: 100%;
+      height: 320px;
+      background-color: var(--cyan-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cyan-primary);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .book-info {
+      padding: 1.25rem;
+    }
+
+    .book-category {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--gold-accent);
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+    }
+
+    .book-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .book-author {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Backdrop -->
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="brand-logo">Publisher Name</a>
+      
+      <div class="nav-actions">
+        <a href="#" class="nav-cta">Contact Us</a>
+        <!-- Hamburger Button -->
+        <button class="hamburger-btn" id="menuToggle" aria-label="Toggle Navigation Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Slide-out Menu Panel -->
+  <div class="mobile-menu-overlay" id="sideMenu">
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">About Company</a>
+      <a href="#">The Team</a>
+      <a href="#">Books Published</a>
+      <a href="#">Publishing Process</a>
+      <a href="#">Contact Us</a>
+    </nav>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <span class="hero-badge">Independent Publishing House</span>
+    <h1>Crafting Timeless Works & Celebrating Authors</h1>
+    <p>Placeholder: We work closely with authors to edit, design, and publish extraordinary fiction and non-fiction titles.</p>
+    <div class="hero-buttons">
+      <a href="#" class="btn-primary">Browse Catalog</a>
+      <a href="#" class="btn-secondary">Our Publishing Process</a>
+    </div>
+  </section>
+
+  <!-- Book Showcase Grid -->
+  <section class="section-container">
+    <div class="section-header">
+      <h2 class="section-title">Recent Publications</h2>
+      <p style="color: var(--text-muted);">Explore our latest titles and manuscript releases.</p>
+    </div>
+
+    <div class="book-grid">
+      <div class="book-card">
+        <div class="book-cover-placeholder">[ Book Cover 1 ]</div>
+        <div class="book-info">
+          <div class="book-category">Non-Fiction</div>
+          <div class="book-title">Title Placeholder One</div>
+          <div class="book-author">By Author Name</div>
+        </div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-cover-placeholder">[ Book Cover 2 ]</div>
+        <div class="book-info">
+          <div class="book-category">Fiction</div>
+          <div class="book-title">Title Placeholder Two</div>
+          <div class="book-author">By Author Name</div>
+        </div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-cover-placeholder">[ Book Cover 3 ]</div>
+        <div class="book-info">
+          <div class="book-category">Biography</div>
+          <div class="book-title">Title Placeholder Three</div>
+          <div class="book-author">By Author Name</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JavaScript for Hamburger Menu Toggle -->
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const sideMenu = document.getElementById('sideMenu');
+    const backdrop = document.getElementById('backdrop');
+
+    function toggleMenu() {
+      menuToggle.classList.toggle('active');
+      sideMenu.classList.toggle('active');
+      backdrop.classList.toggle('active');
+    }
+
+    menuToggle.addEventListener('click', toggleMenu);
+    backdrop.addEventListener('click', toggleMenu);
+  </script>
+
+</body>
+</html>
